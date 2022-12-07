@@ -6,20 +6,23 @@
     <!-- 指定父POM，在父POM中配置子模块的公共依赖 -->
     <parent>
         <groupId>com.github</groupId>
-        <artifactId>spring-cloud-alibaba-samples</artifactId>
+        <artifactId>spring-cloud-upms</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <modules>
-        <module>spring-cloud-upms-model</module>
-        <module>spring-cloud-upms-business</module>
-    </modules>
-
-    <!-- 当前项目/模块坐标 -->
-    <artifactId>spring-cloud-upms</artifactId>
+    <artifactId>spring-cloud-upms-business</artifactId>
     <version>${project.version}</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>spring-cloud-upms</name>
-    <description>Spring Cloud 通用用户权限管理系统</description>
+    <name>spring-cloud-upms-business</name>
+    <description>Spring Cloud 通用用户权限管理系统业务逻辑层</description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

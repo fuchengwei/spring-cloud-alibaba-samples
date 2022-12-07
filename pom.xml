@@ -7,10 +7,11 @@
     <groupId>com.github</groupId>
     <artifactId>spring-cloud-alibaba-samples</artifactId>
     <version>${project.version}</version>
+    <packaging>pom</packaging>
+
     <modules>
         <module>spring-cloud-upms</module>
     </modules>
-    <packaging>pom</packaging>
 
     <name>spring-cloud-alibaba-samples</name>
     <description>基于SpringCloudAlibaba动态工作流后台管理系统</description>
