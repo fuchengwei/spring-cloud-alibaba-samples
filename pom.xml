@@ -11,6 +11,7 @@
 
     <modules>
         <module>spring-cloud-upms</module>
+        <module>spring-cloud-common</module>
     </modules>
 
     <name>spring-cloud-alibaba-samples</name>
