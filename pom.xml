@@ -30,6 +30,8 @@
         <spring-cloud.version>2021.0.5</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
         <hutool.version>5.8.10</hutool.version>
+        <mybatis-spring-boot.version>2.3.0</mybatis-spring-boot.version>
+        <mybatis-plus.version>3.5.2</mybatis-plus.version>
     </properties>
 
     <parent>
