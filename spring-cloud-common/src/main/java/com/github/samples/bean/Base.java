@@ -22,7 +22,7 @@ public class Base implements Serializable {
     /**
      * 主键id
      */
-    private Long id;
+    private String id;
 
     /**
      * 创建时间
