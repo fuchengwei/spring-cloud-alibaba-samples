@@ -45,7 +45,7 @@ public class User extends Base {
     /**
      * 部门id
      */
-    private Long departmentId;
+    private String departmentId;
 
     /**
      * 部门信息

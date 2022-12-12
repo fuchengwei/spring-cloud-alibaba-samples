@@ -25,7 +25,7 @@ public class Department extends Base {
     /**
      * 上级id
      */
-    private Integer parentId;
+    private String parentId;
 
     /**
      * 子节点信息

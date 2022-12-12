@@ -65,7 +65,7 @@ public class Permission extends Base {
     /**
      * 父级id
      */
-    private Integer parentId;
+    private String parentId;
 
     /**
      * 子节点信息
