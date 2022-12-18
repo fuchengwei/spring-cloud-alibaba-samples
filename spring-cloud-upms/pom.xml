@@ -29,6 +29,12 @@
             <groupId>com.github</groupId>
             <artifactId>spring-cloud-common</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github</groupId>
+                    <artifactId>spring-cloud-upms-model</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
