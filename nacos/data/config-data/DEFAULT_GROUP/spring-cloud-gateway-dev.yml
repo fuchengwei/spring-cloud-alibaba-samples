@@ -1,0 +1,90 @@
+server:
+  port: 9100
+  tomcat:
+    uri-encoding: UTF-8
+    accept-count: 30000
+    max-threads: 10000
+    min-spare-threads: 1000
+    max-connections: 10000
+  compression:
+    enabled: true
+  max-http-header-size: 102400
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+      routes:
+        - id: spring-cloud-auth
+          uri: lb://spring-cloud-auth
+          predicates:
+            - Path=/api-auth/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@hostAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 100 # 允许用户每秒处理多少个请求
+                redis-rate-limiter.burstCapacity: 200 # 令牌桶的容量，允许在 1s 内完成的最大请求数。
+        - id: spring-cloud-upms
+          uri: lb://spring-cloud-upms
+          predicates:
+            - Path=/api-upms/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@hostAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 100 # 允许用户每秒处理多少个请求
+                redis-rate-limiter.burstCapacity: 200 # 令牌桶的容量，允许在 1s 内完成的最大请求数。
+        - id: spring-cloud-workflow
+          uri: lb://spring-cloud-workflow
+          predicates:
+            - Path=/api-workflow/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@hostAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 100 # 允许用户每秒处理多少个请求
+                redis-rate-limiter.burstCapacity: 200 # 令牌桶的容量，允许在 1s 内完成的最大请求数。
+        - id: spring-cloud-log
+          uri: lb://spring-cloud-log
+          predicates:
+            - Path=/api-log/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@hostAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 100 # 允许用户每秒处理多少个请求
+                redis-rate-limiter.burstCapacity: 200 # 令牌桶的容量，允许在 1s 内完成的最大请求数。
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin, RETAIN_UNIQUE
+  redis:
+    database: 0 # redis数据库索引
+    host: 127.0.0.1 # redis服务器地址
+    port: 6379 # redis服务器端口
+    jedis: # 连接池
+      pool:
+        max-active: 8 # 连接池最大连接数
+        max-wait: 60000 # 连接池最大阻塞等待时间
+        max-idle: 8 # 连接池最大空闲连接
+        min-idle: 0 # 连接池最小空闲连接
+    timeout: 10000 # 连接超时时间
+
+# 过滤不需要登录拦截的路径
+filter:
+  login:
+    ignore-url:
+      - /api-auth
+      - /v2/api-docs

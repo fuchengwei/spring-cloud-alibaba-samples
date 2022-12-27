@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ichinae.samples.mapper.UserMapper">
+
+    <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true"/>
+
+    <resultMap id="userResultMap" type="com.ichinae.samples.bean.User">
+        <id property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="account" column="account"/>
+        <result property="phone" column="phone"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="sex" column="sex"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="status" column="status"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="department" javaType="com.ichinae.samples.bean.Department">
+            <id property="departmentId" column="d_id"/>
+            <result property="departmentName" column="department_name"/>
+            <result property="description" column="description"/>
+            <result property="superiorId" column="superior_id"/>
+            <result property="createTime" column="d_create_time"/>
+            <result property="updateTime" column="d_create_time"/>
+        </association>
+        <collection property="roles" ofType="com.ichinae.samples.bean.Role" select="getRoleByUserId"
+                    column="user_id"/>
+        <collection property="permissions" ofType="com.ichinae.samples.bean.Permission" select="getPermissionByUserId"
+                    column="user_id">
+            <id property="permissionId" column="permission_id"/>
+            <result property="permissionName" column="permission_name"/>
+            <result property="permissionValue" column="permission_value"/>
+            <result property="permissionType" column="permission_type"/>
+            <result property="permissionStatus" column="permission_status"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="roleResultMap" type="com.ichinae.samples.bean.Role">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleValue" column="role_value"/>
+        <collection property="permissions" ofType="com.ichinae.samples.bean.Permission" select="getPermissionByRoleId"
+                    column="role_id">
+            <id property="permissionId" column="permission_id"/>
+            <result property="permissionName" column="permission_name"/>
+            <result property="permissionValue" column="permission_value"/>
+            <result property="permissionType" column="permission_type"/>
+            <result property="permissionStatus" column="permission_status"/>
+        </collection>
+    </resultMap>
+
+    <select id="getUserByUserId" parameterType="integer" resultMap="userResultMap" flushCache="true">
+        select u.*, d.*, d.department_id as d_id, d.create_time as d_create_time, d.update_time as d_update_time
+        from user u
+                 left join department d
+                           on u.department_id = d.department_id
+        where user_id = #{userId}
+    </select>
+
+    <select id="getUserByAccount" parameterType="string" resultMap="userResultMap" flushCache="true">
+        select u.*, d.*, d.department_id as d_id, d.create_time as d_create_time, d.update_time as d_update_time
+        from user u
+                 left join department d
+                           on u.department_id = d.department_id
+        where (u.account = #{account}
+            or u.phone = #{account}
+            or u.email = #{account})
+    </select>
+
+    <select id="getUserByUserName" parameterType="string" resultMap="userResultMap" flushCache="true">
+        select u.*, d.*, d.department_id as d_id, d.create_time as d_create_time, d.update_time as d_update_time
+        from user u
+                 left join department d
+                           on u.department_id = d.department_id
+        where user_name = #{userName}
+    </select>
+
+    <select id="getUsersByUserName" parameterType="string" resultMap="userResultMap" flushCache="true">
+        select u.*, d.*, d.department_id as d_id, d.create_time as d_create_time, d.update_time as d_update_time
+        from user u
+                 left join department d
+                           on u.department_id = d.department_id
+        where user_name = #{userName}
+    </select>
+
+    <select id="getUsersByKeyword" parameterType="string" resultMap="userResultMap" flushCache="true">
+        select u.*, d.*, d.department_id as d_id, d.create_time as d_create_time, d.update_time as d_update_time
+        from user u
+                 left join department d
+                           on u.department_id = d.department_id
+        where (u.account like '%${keyword}%'
+            or u.user_name like '%${keyword}%'
+            or u.email like '%${keyword}%'
+            or u.phone like '%${keyword}%')
+          and u.is_delete = 0
+    </select>
+
+    <select id="getRoleByUserId" parameterType="integer" resultMap="roleResultMap">
+        select r.*
+        from user_role ur
+                 left join role r
+                           on ur.role_id = r.role_id
+        where ur.user_id = #{userId}
+    </select>
+
+    <select id="getPermissionByUserId" parameterType="integer" resultType="com.ichinae.samples.bean.Permission">
+        select p.*
+        from user_permission up
+                 left join permission p
+                           on up.permission_id = p.permission_id
+        where p.permission_status = 0
+          and p.display = 0
+          and up.user_id = #{userId}
+    </select>
+
+    <select id="getPermissionByRoleId" parameterType="integer" resultType="com.ichinae.samples.bean.Permission">
+        select p.*
+        from role_permission rp
+                 left join permission p
+                           on rp.permission_id = p.permission_id
+        where p.permission_status = 0
+          and p.display = 0
+          and rp.role_id = #{roleId}
+    </select>
+
+    <insert id="insertUserRole">
+        insert into user_role
+            (user_id, role_id)
+        values (#{userId}, #{roleId})
+    </insert>
+
+    <insert id="insertUserPermission">
+        insert into user_permission
+            (user_id, permission_id)
+        values (#{userId}, #{permissionId})
+    </insert>
+
+    <delete id="deleteUserRole">
+        delete from
+        user_role
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="roleId != null">
+                and role_id = #{roleId}
+            </if>
+        </where>
+    </delete>
+
+    <delete id="deleteUserPermission">
+        delete from
+        user_permission
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="permissionId != null">
+                and permissionId = #{permissionId}
+            </if>
+        </where>
+    </delete>
+</mapper>

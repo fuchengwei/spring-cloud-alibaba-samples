@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ichinae.samples.mapper.RoleMapper">
+
+    <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true"/>
+
+    <resultMap id="resultMap" type="com.ichinae.samples.bean.Role">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+
+        <collection property="permissions" ofType="com.ichinae.samples.bean.Permission" select="getPermissionsByRoleId"
+                    column="role_id">
+            <id property="permissionId" column="permission_id"/>
+            <result property="permissionName" column="permission_name"/>
+            <result property="permissionValue" column="permission_value"/>
+            <result property="permissionType" column="permission_type"/>
+            <result property="permissionStatus" column="permission_status"/>
+        </collection>
+    </resultMap>
+
+    <select id="getRolesByRoleName" parameterType="string" resultMap="resultMap">
+        select *
+        from role
+        where role_name like '%${roleName}%'
+        order by role_id
+    </select>
+
+    <select id="getPermissionsByRoleId" parameterType="integer" resultType="com.ichinae.samples.bean.Permission">
+        select p.*
+        from role_permission rp
+                 left join permission p
+                           on rp.permission_id = p.permission_id
+        where p.permission_status = 0
+          and p.display = 0
+          and rp.role_id = #{roleId}
+    </select>
+
+    <insert id="insertRolePermission">
+        insert into role_permission
+            (role_id, permission_id)
+        values (#{roleId}, #{permissionId})
+    </insert>
+
+    <delete id="deleteRolePermission">
+        delete from
+        role_permission
+        <where>
+            <if test="roleId != null">
+                and role_id = #{roleId}
+            </if>
+            <if test="permissionId != null">
+                and permission_id = #{permissionId}
+            </if>
+        </where>
+    </delete>
+</mapper>

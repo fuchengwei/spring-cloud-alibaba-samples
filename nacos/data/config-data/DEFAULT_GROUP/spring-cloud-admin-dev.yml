@@ -1,0 +1,20 @@
+server:
+  port: 4000
+  tomcat:
+    uri-encoding: UTF-8
+    accept-count: 30000
+    max-threads: 10000
+    min-spare-threads: 1000
+    max-connections: 10000
+  compression:
+    enabled: true
+  max-http-header-size: 102400
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS

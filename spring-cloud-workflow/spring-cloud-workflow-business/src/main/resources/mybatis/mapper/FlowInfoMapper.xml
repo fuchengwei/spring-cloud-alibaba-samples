@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ichinae.samples.mapper.FlowInfoMapper">
+
+    <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true"/>
+
+    <resultMap id="ResultMap" type="com.ichinae.samples.bean.FlowInfo">
+        <id property="flowKey" column="flow_key"/>
+        <result property="typeId" column="type_id"/>
+        <result property="icon" column="icon"/>
+        <result property="formId" column="form_id"/>
+        <association property="flowType" javaType="com.ichinae.samples.bean.FlowType">
+            <id property="typeId" column="t_type_id"/>
+            <result property="typeName" column="type_name"/>
+            <result property="description" column="t_description"/>
+            <result property="createTime" column="t_create_time"/>
+            <result property="updateTime" column="t_update_time"/>
+        </association>
+        <association property="form" javaType="com.ichinae.samples.bean.Form">
+            <id property="formId" column="f2_form_id"/>
+            <result property="formName" column="form_name"/>
+            <result property="description" column="f2_description"/>
+            <result property="content" column="content"/>
+            <result property="createTime" column="f2_create_time"/>
+            <result property="updateTime" column="f2_update_time"/>
+        </association>
+    </resultMap>
+
+
+    <select id="getFlowInfoByFlowKey" parameterType="string" resultMap="ResultMap">
+        select f1.*,
+               t.*,
+               t.type_id      as t_type_id,
+               t.description  as t_description,
+               t.create_time  as t_create_time,
+               t.update_time  as t_update_time,
+               f2.*,
+               f2.form_id     as f2_form_id,
+               f2.description as f2_description,
+               f2.create_time as f2_create_time,
+               f2.update_time as f2_update_time
+        from flow_info f1
+                 left join flow_type t
+                           on f1.type_id = t.type_id
+                 left join form f2
+                           on f1.form_id = f2.form_id
+        where f1.flow_key = #{flowKey}
+    </select>
+
+    <select id="getFlowInfosByTypeId" parameterType="integer" resultMap="ResultMap">
+        select f1.*,
+               t.*,
+               t.type_id      as t_type_id,
+               t.description  as t_description,
+               t.create_time  as t_create_time,
+               t.update_time  as t_update_time,
+               f2.*,
+               f2.form_id     as f2_form_id,
+               f2.description as f2_description,
+               f2.create_time as f2_create_time,
+               f2.update_time as f2_update_time
+        from flow_info f1
+                 left join flow_type t
+                           on f1.type_id = t.type_id
+                 left join form f2
+                           on f1.form_id = f2.form_id
+        where f1.type_id = #{typeId}
+    </select>
+</mapper>

@@ -1,0 +1,33 @@
+server:
+  port: 5000
+  tomcat:
+    uri-encoding: UTF-8
+    accept-count: 30000
+    max-threads: 10000
+    min-spare-threads: 1000
+    max-connections: 10000
+  compression:
+    enabled: true
+  max-http-header-size: 102400
+
+spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 6000
+        max-idle: 8
+        min-idle: 0
+    timeout: 10000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS

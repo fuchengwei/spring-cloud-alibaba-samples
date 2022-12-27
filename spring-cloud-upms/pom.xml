@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <!-- 指定父POM，在父POM中配置子模块的公共依赖 -->
     <parent>
-        <groupId>com.github</groupId>
         <artifactId>spring-cloud-alibaba-samples</artifactId>
+        <groupId>com.ichinae</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
     <modules>
         <module>spring-cloud-upms-model</module>
@@ -17,24 +17,40 @@
 
     <!-- 当前项目/模块坐标 -->
     <artifactId>spring-cloud-upms</artifactId>
-    <version>${project.version}</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>spring-cloud-upms</name>
     <description>Spring Cloud 通用用户权限管理系统</description>
 
     <dependencies>
-        <!-- 公共依赖 -->
+        <!-- 引入 spring-jdbc -->
         <dependency>
-            <groupId>com.github</groupId>
-            <artifactId>spring-cloud-common</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github</groupId>
-                    <artifactId>spring-cloud-upms-model</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- mysql -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!-- mybatisSpring -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis-spring.version}</version>
+        </dependency>
+        <!-- 通用mapper -->
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper-spring-boot-starter</artifactId>
+            <version>${mapper-spring.version}</version>
+        </dependency>
+        <!-- pageHelper -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper-spring.version}</version>
         </dependency>
     </dependencies>
 </project>
